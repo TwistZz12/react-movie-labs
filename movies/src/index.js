@@ -87,7 +87,7 @@ const movies = [sample,sample,sample,sample,sample,sample,sample];
 
 const App = () => {
   return(
-    <HomePage moviesProps = {movies}/>
+    <HomePage movies = {movies}/>
     );   
 };
 
