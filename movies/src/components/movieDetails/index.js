@@ -8,7 +8,7 @@ import NavigationIcon from "@mui/icons-material/Navigation";
 import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
-import MovieReviews from "../movieReviews"
+import MovieReviews from "../movieReviews";
 
 const root = {
     display: "flex",
@@ -48,6 +48,8 @@ const MovieDetails = ({ movie }) => {
           
         ))}
       </Paper>
+
+      {/* 原有的信息展示 */}
       <Paper component="ul" sx={{...root}}>
         <Chip icon={<AccessTimeIcon />} label={`${movie.runtime} min.`} />
         <Chip
@@ -56,10 +58,22 @@ const MovieDetails = ({ movie }) => {
         />
         <Chip
           icon={<StarRate />}
-          label={`${movie.vote_average} (${movie.vote_count}`}
-        />
+          label={`${movie.vote_average} (${movie.vote_count}`}/>
         <Chip label={`Released: ${movie.release_date}`} />
       </Paper>
+
+      {/* 将制作国家部分移动到其他信息的下方 */}
+      <Paper component="ul" sx={{...root}}>
+        <li>
+          <Chip label="Production Countries" sx={{...chip}} color="primary" />
+        </li>
+        {movie.production_countries.map((country, index) => (
+          <li key={index}>
+            <Chip label={country.name} sx={{...chip}} />
+          </li>
+        ))}
+      </Paper>
+
       <Fab
         color="secondary"
         variant="extended"
@@ -76,7 +90,7 @@ const MovieDetails = ({ movie }) => {
       <Drawer anchor="top" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <MovieReviews movie={movie} />
       </Drawer>
-      </>
+    </>
   );
 };
-export default MovieDetails ;
+export default MovieDetails;
