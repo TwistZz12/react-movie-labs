@@ -86,3 +86,15 @@ export const getMovie = (args) => {
       throw error
    });
   };
+
+export const getUpcomingMovies = async () => {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/upcoming?api_key=1d9cd19cdc9d8e15159437d1d1cbec27&language=en-US&page=1`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch upcoming movies");
+  }
+  const data = await response.json();
+  return data;
+};
+
