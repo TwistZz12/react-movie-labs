@@ -30,11 +30,13 @@ const MoviesContextProvider = (props) => {
   const addToWatchList = (movie) => {
     if (!watchList.includes(movie.id)) {
       setWatchList((prev) => [...prev, movie.id]);
+      console.log(`Watchlist: ${[...watchList, movie.id]}`);
     }
   };
 
   const removeFromWatchList = (movie) => {
     setWatchList(watchList.filter((mId) => mId !== movie.id));
+    console.log(`Watchlist: ${watchList.filter((mId) => mId !== movie.id)}`);
   };
 
   return (
