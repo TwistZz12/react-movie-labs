@@ -1,32 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
+import { MoviesContext } from "../../contexts/moviesContext";
 
 const ratings = [
-  {
-    value: 5,
-    label: "Excellent",
-  },
-  {
-    value: 4,
-    label: "Good",
-  },
-  {
-    value: 3,
-    label: "Average",
-  },
-  {
-    value: 2,
-    label: "Poor",
-  },
-  {
-    value: 0,
-    label: "Terrible",
-  },
+  { value: 5, label: "Excellent" },
+  { value: 4, label: "Good" },
+  { value: 3, label: "Average" },
+  { value: 2, label: "Poor" },
+  { value: 0, label: "Terrible" },
 ];
 
 const styles = {
@@ -58,14 +47,17 @@ const styles = {
 
 const ReviewForm = ({ movie }) => {
   const [rating, setRating] = useState(3);
-  
+  const [open, setOpen] = useState(false); // 用于控制 Snackbar 的状态
+  const navigate = useNavigate();
+  const context = useContext(MoviesContext);
+
   const defaultValues = {
     author: "",
     review: "",
     agree: false,
     rating: "3",
   };
-  
+
   const {
     control,
     formState: { errors },
@@ -77,10 +69,16 @@ const ReviewForm = ({ movie }) => {
     setRating(event.target.value);
   };
 
+  const handleSnackClose = () => {
+    setOpen(false);
+    navigate("/movies/favorites"); // 当 Snackbar 关闭时，返回收藏页面
+  };
+
   const onSubmit = (review) => {
     review.movieId = movie.id;
     review.rating = rating;
-    console.log(review);
+    context.addReview(movie, review); // 将评论添加到上下文
+    setOpen(true); // 显示 Snackbar
   };
 
   return (
@@ -88,6 +86,20 @@ const ReviewForm = ({ movie }) => {
       <Typography component="h2" variant="h3">
         Write a review
       </Typography>
+
+      {/* Snackbar 用于显示成功消息 */}
+      <Snackbar
+        sx={styles.snack}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleSnackClose}
+      >
+        <MuiAlert severity="success" variant="filled" onClose={handleSnackClose}>
+          <Typography variant="h6">
+            Thank you for submitting a review!
+          </Typography>
+        </MuiAlert>
+      </Snackbar>
 
       <form sx={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
         <Controller
@@ -148,7 +160,7 @@ const ReviewForm = ({ movie }) => {
         <Controller
           control={control}
           name="rating"
-          render={({ field: { onChange, value } }) => (
+          render={() => (
             <TextField
               id="select-rating"
               select
@@ -184,7 +196,7 @@ const ReviewForm = ({ movie }) => {
             onClick={() => {
               reset({
                 author: "",
-                content: "",
+                review: "",
               });
             }}
           >
