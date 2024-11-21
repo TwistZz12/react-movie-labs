@@ -1,55 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PageTemplate from "../components/templateMovieListPage";
+import Spinner from "../components/spinner";
+import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 import { getMovies } from "../api/tmdb-api";
-import PageTemplate from '../components/templateMovieListPage';
-import { useQuery } from 'react-query';
-import Spinner from '../components/spinner';
-import AddToFavoritesIcon from '../components/cardIcons/addToFavorites';
-import Pagination from '@mui/material/Pagination'; // Material-UI 分页组件
 
 const HomePage = () => {
-  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [movies, setMovies] = useState([]); // 存储电影数据
+  const [page, setPage] = useState(1); // 当前页码
+  const [totalPages, setTotalPages] = useState(0); // 总页数
+  const [loading, setLoading] = useState(true); // 加载状态
+  const [error, setError] = useState(null); // 错误状态
 
-  const { data, error, isLoading, isError } = useQuery(['discover', currentPage], () => getMovies(currentPage), {
-    keepPreviousData: true,
-  });
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (isError) {
-    return <h1>{error.message}</h1>;
-  }
-
-  const movies = data.results;
-  const favorites = movies.filter((m) => m.favorite);
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-
-  const handlePageChange = (event, page) => {
-    setCurrentPage(page);
+  // 获取电影数据的函数
+  const fetchMovies = async (page) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getMovies(page); // 调用 API
+      setMovies(data.results); // 更新电影数据
+      setTotalPages(data.total_pages); // 更新总页数
+    } catch (err) {
+      setError(err.message); // 捕获错误
+    } finally {
+      setLoading(false); // 结束加载状态
+    }
   };
 
-  return (
-    <div>
-      <PageTemplate
-        title="Discover Movies"
-        movies={movies}
-        action={(movie) => <AddToFavoritesIcon movie={movie} />}
-      />
+  // 页面加载或页码更新时调用 API
+  useEffect(() => {
+    fetchMovies(page);
+  }, [page]);
 
-      {/* Styled Pagination */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        <Pagination
-          count={data.total_pages} // 总页数
-          page={currentPage} // 当前页
-          onChange={handlePageChange} // 页码切换
-          color="primary" // 颜色
-          size="large" // 按钮大小
-          variant="outlined" // 按钮样式
-          shape="rounded" // 按钮形状
-        />
-      </div>
-    </div>
+  // 处理分页切换
+  const handlePageChange = (event, value) => {
+    setPage(value); // 更新页码
+  };
+
+  if (loading) return <Spinner />;
+  if (error) return <h1>{error}</h1>;
+
+  return (
+    <PageTemplate
+      title="Discover Movies"
+      movies={movies} // 当前页的电影数据
+      action={(movie) => <AddToFavoritesIcon movie={movie} />}
+      currentPage={page} // 当前页
+      totalPages={totalPages} // 总页数
+      onPageChange={handlePageChange} // 分页回调
+    />
   );
 };
 
