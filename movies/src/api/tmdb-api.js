@@ -165,3 +165,32 @@ export const getVideos = async ({ queryKey }) => {
 
   return data; // 返回完整的数据对象
 };
+
+
+export const getActorDetails = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  const response = await fetch(
+    `https://api.themoviedb.org/3/person/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch actor details");
+  }
+
+  return response.json();
+};
+
+
+
+export const getActorMovies = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  const response = await fetch(
+    `https://api.themoviedb.org/3/person/${id}/movie_credits?api_key=${process.env.REACT_APP_TMDB_KEY}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch actor's movies");
+  }
+
+  return response.json();
+};
