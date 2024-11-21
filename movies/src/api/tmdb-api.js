@@ -1,18 +1,20 @@
-export const getMovies = () => {
+export const getMovies = (page = 1) => {
   return fetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=false&include_video=false&page=1`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
-    }
-    return response.json();
-  })
-  .catch((error) => {
-      throw error
-  });
+    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=false&include_video=false&page=${page}`
+  )
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((error) => {
+          throw new Error(error.status_message || "Something went wrong");
+        });
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
 };
+
   
 export const getMovie = (args) => {
   //console.log(args)
@@ -87,17 +89,16 @@ export const getMovie = (args) => {
    });
   };
 
-export const getUpcomingMovies = async () => {
-  const response = await fetch(
-    `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=1`
-  );
-  if (!response.ok) {
-    throw new Error("Failed to fetch upcoming movies");
-  }
-  const data = await response.json();
-  return data;
-};
-
+  export const getUpcomingMovies = async (page = 1) => {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch upcoming movies");
+    }
+    return response.json();
+  };
+  
 
 export const getMovieTredning = () => {
   return fetch(
@@ -133,21 +134,16 @@ export const getCredits = ({ queryKey }) => {
  });
 };
 
-export const getNowPlayingMovies = () => {
-  return fetch(
-    `https://api.themoviedb.org/3/movie/now_playing?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
-    }
-    return response.json();
-  })
-  .catch((error) => {
-      throw error
-  });
+export const getNowPlayingMovies = async (page = 1) => {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/now_playing?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch now playing movies");
+  }
+  return response.json();
 };
+
 
 export const getVideos = async ({ queryKey }) => {
   const [, { id }] = queryKey;

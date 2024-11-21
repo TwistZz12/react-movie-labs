@@ -1,28 +1,54 @@
-import React, { useEffect, useState } from "react";
-import MovieList from "../components/movieList"; 
-import PageTemplate from "../components/templateMovieListPage"; 
-import { getUpcomingMovies } from "../api/tmdb-api"; 
-import AddToWatchListIcon from '../components/cardIcons/addToWatchList';
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import { getUpcomingMovies } from "../api/tmdb-api";
+import PageTemplate from "../components/templateMovieListPage";
+import Spinner from "../components/spinner";
+import AddToWatchListIcon from "../components/cardIcons/addToWatchList";
+import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
 
 const UpcomingMoviesPage = () => {
-  const [movies, setMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      const data = await getUpcomingMovies();
-      setMovies(data.results);
-    };
-    fetchMovies();
-  }, []);
+  const { data, error, isLoading, isError } = useQuery(
+    ["upcomingMovies", currentPage],
+    () => getUpcomingMovies(currentPage),
+    { keepPreviousData: true }
+  );
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (isError) {
+    return <h1>{error.message}</h1>;
+  }
+
+  const movies = data.results;
+
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
 
   return (
-    <PageTemplate
-      title="Upcoming Movies"
-      movies={movies}
-      action={(movie) => {
-        return <AddToWatchListIcon movie={movie} />;
-      }}
-    />
+    <div>
+      <PageTemplate
+        title="Upcoming Movies"
+        movies={movies}
+        action={(movie) => <AddToWatchListIcon movie={movie} />}
+      />
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <Pagination
+          count={data.total_pages} // 总页数
+          page={currentPage} // 当前页
+          onChange={handlePageChange} // 页码切换
+          color="primary"
+          size="large"
+          variant="outlined"
+          shape="rounded"
+        />
+      </div>
+    </div>
   );
 };
 
