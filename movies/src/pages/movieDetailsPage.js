@@ -1,28 +1,34 @@
 import React from "react";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import MovieDetails from "../components/movieDetails/";
 import PageTemplate from "../components/templateMoviePage";
-import { getMovie, getCredits } from '../api/tmdb-api'; 
+import { getMovie, getCredits, getVideos } from "../api/tmdb-api"; 
 import { useQuery } from "react-query";
-import Spinner from '../components/spinner';
+import Spinner from "../components/spinner";
 import CastList from "../components/castList";
 
-const MoviePage = (props) => {
+const MovieDetailsPage = (props) => {
   const { id } = useParams();
 
- 
+  // 获取电影详情
   const { data: movie, error: movieError, isLoading: movieLoading, isError: movieIsError } = useQuery(
     ["movie", { id: id }],
     getMovie
   );
 
-
+  // 获取演员信息
   const { data: credits, error: creditsError, isLoading: creditsLoading, isError: creditsIsError } = useQuery(
     ["credits", { id: id }],
     getCredits
   );
 
-  if (movieLoading || creditsLoading) {
+  // 获取视频信息
+  const { data: videos, error: videosError, isLoading: videosLoading, isError: videosIsError } = useQuery(
+    ["videos", { id: id }],
+    getVideos
+  );
+
+  if (movieLoading || creditsLoading || videosLoading) {
     return <Spinner />;
   }
 
@@ -34,18 +40,16 @@ const MoviePage = (props) => {
     return <h1>{creditsError.message}</h1>;
   }
 
+  if (videosIsError) {
+    return <h1>{videosError.message}</h1>;
+  }
+
   return (
-    <>
-      {movie ? (
-        <PageTemplate movie={movie}>
-          <MovieDetails movie={movie} />
-          <CastList cast={credits.cast.slice(0,12)} />
-        </PageTemplate>
-      ) : (
-        <p>Waiting for movie details</p>
-      )}
-    </>
+    <PageTemplate movie={movie}>
+      <MovieDetails movie={movie} videos={videos.results} />
+      <CastList cast={credits.cast.slice(0, 12)} />
+    </PageTemplate>
   );
 };
 
-export default MoviePage;
+export default MovieDetailsPage;

@@ -148,3 +148,20 @@ export const getNowPlayingMovies = () => {
       throw error
   });
 };
+
+export const getVideos = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_KEY}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch video data");
+  }
+
+  const data = await response.json(); // 解析返回的 JSON 数据
+
+  console.log("Videos data:", data.results); // 打印解析后的 results 数据
+
+  return data; // 返回完整的数据对象
+};
