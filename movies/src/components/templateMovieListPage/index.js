@@ -22,7 +22,8 @@ function MovieListPageTemplate({ movies, title, action }) {
     if (type === "name") setNameFilter(value);
     else setGenreFilter(value);
   };
-
+  console.log(movies)
+ 
   return (
     <Grid container>
       <Grid size={12}>
