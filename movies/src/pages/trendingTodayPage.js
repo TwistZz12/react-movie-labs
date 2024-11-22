@@ -4,15 +4,19 @@ import { getMovieTredning } from "../api/tmdb-api";
 import PageTemplate from "../components/templateMovieListPage";
 import Spinner from "../components/spinner";
 import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 
 const TrendingTodayPage = () => {
   const [currentPage, setCurrentPage] = useState(1); // 当前页
+  const [sortOrder, setSortOrder] = useState("popularity.desc"); // 排序规则
 
-  // 动态调用 API 获取当前页的数据
   const { data, error, isLoading, isError } = useQuery(
-    ["trendingToday", currentPage], // 使用当前页作为缓存 key 的一部分
-    () => getMovieTredning(currentPage), // 调用 API 并传入页码
-    { keepPreviousData: true } // 保留前一页数据
+    ["trendingToday", currentPage],
+    () => getMovieTredning(currentPage),
+    { keepPreviousData: true }
   );
 
   if (isLoading) {
@@ -23,7 +27,15 @@ const TrendingTodayPage = () => {
     return <h1>{error.message}</h1>;
   }
 
-  const movies = data.results; // 当前页的电影数据
+  let movies = data.results; // 当前页的电影数据
+
+  // 前端排序逻辑
+  if (sortOrder === "popularity.desc") {
+    movies = movies.sort((a, b) => b.popularity - a.popularity); // 按流行度降序
+  } else if (sortOrder === "popularity.asc") {
+    movies = movies.sort((a, b) => a.popularity - b.popularity); // 按流行度升序
+  }
+
   const totalPages = data.total_pages; // API 返回的总页数
 
   // 处理分页切换
@@ -31,11 +43,35 @@ const TrendingTodayPage = () => {
     setCurrentPage(page); // 更新当前页
   };
 
+  // 处理排序规则变化
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value); // 更新排序规则
+    setCurrentPage(1); // 重置到第一页
+  };
+
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
+      {/* 排序功能 */}
+      <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Typography variant="h5" component="div">
+          Trending Today
+        </Typography>
+        <FormControl style={{ width: "200px" }}>
+          <Select
+            value={sortOrder}
+            onChange={handleSortChange}
+            displayEmpty
+            inputProps={{ "aria-label": "Sort by" }}
+          >
+            <MenuItem value="popularity.desc">Most Popular</MenuItem>
+            <MenuItem value="popularity.asc">Least Popular</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
+
       {/* 显示电影列表 */}
       <PageTemplate
-        title="Trending Today"
+        title=""
         movies={movies}
         action={() => {}}
       />

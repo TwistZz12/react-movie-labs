@@ -99,7 +99,6 @@ export const getMovie = (args) => {
     return response.json();
   };
   
-
   export const getMovieTredning = (page = 1) => {
     return fetch(
       `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
@@ -116,6 +115,8 @@ export const getMovie = (args) => {
         throw error;
       });
   };
+  
+  
   
 
 export const getCredits = ({ queryKey }) => {
