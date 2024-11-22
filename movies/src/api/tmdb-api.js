@@ -100,21 +100,23 @@ export const getMovie = (args) => {
   };
   
 
-export const getMovieTredning = () => {
-  return fetch(
-    `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US`
-  ).then( (response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
+  export const getMovieTredning = (page = 1) => {
+    return fetch(
+      `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.status_message || "Something went wrong");
+          });
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        throw error;
       });
-    }
-    return response.json();
-  })
-  .catch((error) => {
-    throw error
- });
-};
+  };
+  
 
 export const getCredits = ({ queryKey }) => {
   const [, idPart] = queryKey;
