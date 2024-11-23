@@ -5,6 +5,7 @@ import PageTemplate from "../components/templateMovieListPage";
 import Spinner from "../components/spinner";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
+import LoginButton from "../components/LoginButton"; // 引入 LoginButton 组件
 
 const HomePage = () => {
   const [currentPage, setCurrentPage] = useState(1); // 当前页状态
@@ -33,9 +34,15 @@ const HomePage = () => {
 
   return (
     <div>
+      {/* 添加登录按钮 */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px" }}>
+        <h1 style={{ margin: 0 }}>Discover Movies</h1>
+        <LoginButton />
+      </div>
+
       {/* 页面模板，渲染电影列表 */}
       <PageTemplate
-        title="Discover Movies"
+        title=""
         movies={movies}
         action={(movie) => <AddToFavoritesIcon movie={movie} />}
       />
