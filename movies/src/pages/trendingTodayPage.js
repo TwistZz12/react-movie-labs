@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { getMovieTredning } from "../api/tmdb-api";
 import PageTemplate from "../components/templateMovieListPage";
 import Spinner from "../components/spinner";
+import AddToWatchListIcon from "../components/cardIcons/addToWatchList"; // 引入图标组件
 import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
@@ -73,7 +74,7 @@ const TrendingTodayPage = () => {
       <PageTemplate
         title=""
         movies={movies}
-        action={() => {}}
+        action={(movie) => <AddToWatchListIcon movie={movie} />} // 添加图标组件
       />
 
       {/* 分页控件 */}

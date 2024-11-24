@@ -3,7 +3,8 @@ import { useQuery } from "react-query";
 import { getMovies } from "../api/tmdb-api";
 import PageTemplate from "../components/templateMovieListPage";
 import Spinner from "../components/spinner";
-import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
+import AddToFavoritesIcon from "../components/cardIcons/addToFavorites"; // 喜欢的图标
+import AddToWatchListIcon from "../components/cardIcons/addToWatchList"; // 添加到观看列表的图标
 import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
 import LoginButton from "../components/LoginButton"; // 引入 LoginButton 组件
 
@@ -44,7 +45,12 @@ const HomePage = () => {
       <PageTemplate
         title=""
         movies={movies}
-        action={(movie) => <AddToFavoritesIcon movie={movie} />}
+        action={(movie) => (
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <AddToFavoritesIcon movie={movie} /> {/* 原来的喜欢图标 */}
+            <AddToWatchListIcon movie={movie} /> {/* 新增的添加到观看列表图标 */}
+          </div>
+        )}
       />
 
       {/* 分页控件 */}

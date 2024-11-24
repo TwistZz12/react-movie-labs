@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { getNowPlayingMovies } from "../api/tmdb-api";
 import PageTemplate from "../components/templateMovieListPage";
 import Spinner from "../components/spinner";
+import AddToWatchListIcon from "../components/cardIcons/addToWatchList"; // 引入图标组件
 import Pagination from "@mui/material/Pagination"; // Material-UI 分页组件
 
 const NowPlayingMoviesPage = () => {
@@ -30,12 +31,14 @@ const NowPlayingMoviesPage = () => {
 
   return (
     <div>
+      {/* 使用 PageTemplate 并传递 AddToWatchListIcon 作为 action */}
       <PageTemplate
         title="Now Playing Movies"
         movies={movies}
-        action={(movie) => <button>Add to Watchlist</button>}
+        action={(movie) => <AddToWatchListIcon movie={movie} />}
       />
 
+      {/* 分页控件 */}
       <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
         <Pagination
           count={data.total_pages} // 总页数
